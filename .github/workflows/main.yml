@@ -26,7 +26,7 @@ jobs:
 
     # Setup CMake
     - name: Setup CMake
-      if: matrix.os == 'linux-latest'
+      if: matrix.os == 'ubuntu-latest'
       uses: Symbitic/install-cmake@v0.1.1
       with:
         platform: linux
@@ -43,7 +43,7 @@ jobs:
   
     # Setup Packages
     - name: Setup Packages
-      if: matrix.os == 'linux-latest'
+      if: matrix.os == 'ubuntu-latest'
       run: sudo apt update && sudo apt upgrade && sudo apt install p7zip build-essential git cmake ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libevdev-dev libusb-1.0-0-dev libxrandr-dev libxi-dev libpangocairo-1.0-0 qt6-base-private-dev libbluetooth-dev libasound2-dev libpulse-dev libgl1-mesa-dev libudev-dev libsystemd-dev dpkg-dev
    
     - name: Setup Packages
@@ -66,7 +66,7 @@ jobs:
     
     # Run CMake
     - name: Run CMake
-      if: matrix.os == 'linux-latest'
+      if: matrix.os == 'ubuntu-latest'
       run: mkdir -p build && cd build && cmake .. -G Ninja -DCMAKE_CXX_FLAGS="-Xclang -fcolor-diagnostics" -DCMAKE_PREFIX_PATH=$(brew --prefix qt6)
 
     # Setup MSBuild For Later Usage
@@ -78,7 +78,7 @@ jobs:
 
     # Build Project
     - name: Run Make
-      if: matrix.os == 'linux-latest' || matrix.os == 'macos-latest'
+      if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
       run: cd build && ninja -j$(nproc)
       
     # Run MSBuild
@@ -88,12 +88,12 @@ jobs:
       
     # Configure Dolphin
     - name: Configure Dolphin
-      if: matrix.os == 'linux-latest' || matrix.os == 'macos-latest'
+      if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
       run: cd build && cp -r ../Data/Sys/ Binaries/ && cp -r ../Data/User/ Binaries/ && cp -r ../Data/dolphin-emu.png Binaries/ && touch Binaries/portable.txt
     
     # Zip Artifacts
     - name: Zip Artifacts
-      if: matrix.os == 'linux-latest
+      if: matrix.os == 'ubuntu-latest
       run: 7z a -r /home/runner/DolphinMPN-Linux /home/runner/work/dolphin-mpn-src/dolphin-mpn-src/build/Binaries/
     
     - name: Zip Artifacts
@@ -106,7 +106,7 @@ jobs:
 
     # Upload Artifact
     - name: Upload Build Artifact
-      if: matrix.os == 'linux-latest'
+      if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v2
       with:
         name: DolphinMPN-Linux
@@ -144,7 +144,7 @@ jobs:
         files: /Users/runner/DolphinMPN-macos.7z
         
     - name: Upload Build Artifact to Releases
-      if: matrix.os == 'linux-latest
+      if: matrix.os == 'ubuntu-latest
       uses: SierraSoftworks/gh-releases@v1.0.7
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
