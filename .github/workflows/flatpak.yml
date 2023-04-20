@@ -18,14 +18,6 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    # Setup CMake
-    - name: Setup CMake
-      uses: Symbitic/install-cmake@v0.1.1
-      with:
-        platform: linux
-    # Submoudle
-    - name: Checkout Submodles
-      run: git submodule update --init --recursive
     # Setup Packages
     - name: Setup Packages
       run: sudo apt install build-essential git cmake ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libevdev-dev libusb-1.0-0-dev libxrandr-dev libxi-dev libpangocairo-1.0-0 qt6-base-private-dev libbluetooth-dev libasound2-dev libpulse-dev libgl1-mesa-dev libudev-dev libsystemd-dev dpkg-dev flatpak flatpak-builder
