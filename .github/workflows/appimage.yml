@@ -42,7 +42,7 @@ jobs:
       uses: AppImageCrafters/build-appimage-action@master
       with:
         recipe: .appimage/appimage.yml
-        args: --appdir /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/Binaries/OUT/
+        args: --appdir=/home/runner/work/Dolphin-MPN/Dolphin-MPN/build/Binaries/OUT/
     # Upload Artifact
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
