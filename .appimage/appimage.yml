@@ -83,5 +83,5 @@ AppDir:
       use_host_x: true
 AppImage:
   arch: x86_64
-  update-information: !ENV ${UPDATE_INFO}
+  update-information: None
   sign-key: None
