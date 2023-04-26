@@ -36,13 +36,22 @@ jobs:
       run: cd build && ninja -j$(nproc)
     # Configure Dolphin
     - name: Configure Dolphin
-      run: cd build && cp -r ../Data/Sys/ Binaries/ && cp -r ../Data/User/ Binaries/ && cp -r ../Data/dolphin-emu.png Binaries/ && touch Binaries/portable.txt
-    # Build AppImage
-    - name: Build AppImage
-      uses: AppImageCrafters/build-appimage-action@master
-      with:
-        recipe: .appimage/appimage.yml
-        args: --appdir=/home/runner/work/Dolphin-MPN/Dolphin-MPN/build/Binaries/OUT/
+      run: cd build && mkdir Binaries/OUT/ && cp -r ../Data/Sys/ Binaries/OUT/ && cp -r ../Data/User/ Binaries/OUT/ && cp -r ../Data/dolphin-emu.png Binaries/OUT/ && touch Binaries/OUT/portable.txt
+    # Install linuxdeploy
+    - name: 'Install linuxdeploy'
+      run: |
+        wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+        chmod +x linuxdeploy-x86_64.AppImage
+        chmod +x linuxdeploy-plugin-qt-x86_64.AppImage
+    # Create AppImage
+    - name: 'Create AppImage'
+      run: |
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir -e "dolphin-mpn" -i /home/runner/work/Dolphin-MPN/Dolphin-MPN/Data/dolphin-emu.png -d /home/runner/work/Dolphin-MPN/Dolphin-MPN/Data/dolphin-emu.desktop --plugin qt --output appimage
+        rm linuxdeploy-x86_64.AppImage
+        rm linuxdeploy-plugin-qt-x86_64.AppImage
+        mv *.AppImage /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/Binaries/OUT/DolphinMPN-Linux.AppImage
+
     # Upload Artifact
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
