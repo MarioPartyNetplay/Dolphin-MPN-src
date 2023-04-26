@@ -33,7 +33,7 @@ AppDir:
       - libxrandr-dev 
       - libxi-dev 
       - libpangocairo-1.0-0 
-      - qt6-base-private-dev 
+      - qt6-base-dev 
       - libbluetooth-dev 
       - libasound2-dev 
       - libpulse-dev 
