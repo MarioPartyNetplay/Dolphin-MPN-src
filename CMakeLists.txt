@@ -1042,7 +1042,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux|FreeBSD|OpenBSD")
   # Install manpages
   install(FILES Data/dolphin-emu.6
           DESTINATION ${CMAKE_INSTALL_MANDIR}/man6)
-  install(FILES Data/dolphin-emu-nogui.6
+  install(FILES Data/dolphin-mpn-nogui.6
           DESTINATION ${CMAKE_INSTALL_MANDIR}/man6)
 endif()
 

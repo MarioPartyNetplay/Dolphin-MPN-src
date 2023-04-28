@@ -36,7 +36,7 @@ jobs:
       run: cd build && ninja -j$(nproc)
     # Configure Dolphin
     - name: Configure Dolphin
-      run: cd build && cp -r ../Data/Sys/ Binaries/ && cp -r ../Data/User/ Binaries/ && cp -r ../Data/dolphin-mpn.png Binaries/ && touch Binaries/portable.txt
+      run: cd build && cp -r ../Data/Sys/ Binaries/ && cp -r ../Data/User/ Binaries/ && cp -r ../Data/dolphin-mpn.png Binaries/ && touch Binaries/portable.txt && mv Binaries/User Binaries/user
     # Upload Artifact
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
