@@ -144,7 +144,7 @@ include(RemoveCompileFlag)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Set up paths
-set(datadir ${CMAKE_INSTALL_FULL_DATADIR}/dolphin-emu CACHE PATH "datadir")
+set(datadir ${CMAKE_INSTALL_FULL_DATADIR}/dolphin-mpn CACHE PATH "datadir")
 add_definitions(-DDATA_DIR="${datadir}/")
 
 if(CMAKE_SYSROOT)

@@ -27,7 +27,7 @@ jobs:
         platform: linux
     # Setup Packages
     - name: Setup Packages
-      run: sudo apt update && sudo apt upgrade && sudo apt install libfuse2 p7zip-full build-essential git cmake ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libevdev-dev libusb-1.0-0-dev libxrandr-dev libxi-dev libpangocairo-1.0-0 qt6-base-private-dev libbluetooth-dev libasound2-dev libpulse-dev libgl1-mesa-dev libudev-dev libsystemd-dev dpkg-dev
+      run: sudo apt update && sudo apt upgrade && sudo apt install qmake6 libfuse2 p7zip-full build-essential git cmake ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libevdev-dev libusb-1.0-0-dev libxrandr-dev libxi-dev libpangocairo-1.0-0 qt6-base-private-dev libbluetooth-dev libasound2-dev libpulse-dev libgl1-mesa-dev libudev-dev libsystemd-dev dpkg-dev
     # Run CMake
     - name: Run CMake
       run: mkdir build && cd build && cmake .. -G Ninja -DLINUX_LOCAL_DEV=true -DCPACK_PACKAGE_CONTACT="Mario Party Netplay" -DDISTRIBUTOR="Mario Party Netplay"
@@ -36,7 +36,7 @@ jobs:
       run: cd build && ninja -j$(nproc)
     # Configure Dolphin
     - name: Configure Dolphin
-      run: cd build && mkdir Binaries/OUT/ && cp -r ../Data/Sys/ Binaries/OUT/ && cp -r ../Data/User/ Binaries/OUT/ && cp -r ../Data/dolphin-emu.png Binaries/OUT/ && touch Binaries/OUT/portable.txt
+      run: cd build && mkdir Binaries/OUT/ && cp Binaries/dolphin-mpn Binaries/OUT/dolphin-mpn && cp -r ../Data/Sys/ Binaries/OUT/ && cp -r ../Data/User/ Binaries/OUT/ && touch Binaries/OUT/portable.txt && mv Binaries/OUT/User Binaries/OUT/user
     # Install linuxdeploy
     - name: 'Install linuxdeploy'
       run: |
@@ -47,11 +47,8 @@ jobs:
     # Create AppImage
     - name: 'Create AppImage'
       run: |
-        ./linuxdeploy-x86_64.AppImage --appdir AppDir -e "dolphin-mpn" -i /home/runner/work/Dolphin-MPN/Dolphin-MPN/Data/dolphin-emu.png -d /home/runner/work/Dolphin-MPN/Dolphin-MPN/Data/dolphin-emu.desktop --plugin qt --output appimage
-        rm linuxdeploy-x86_64.AppImage
-        rm linuxdeploy-plugin-qt-x86_64.AppImage
-        mv *.AppImage /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/Binaries/OUT/DolphinMPN-Linux.AppImage
-
+        export QMAKE=qmake6 && ~/linuxdeploy-x86_64.AppImage --appdir AppDir  -e "/home/runner/work/Dolphin-MPN/build/Binaries/OUT/dolphin-mpn"  -i /home/runner/work/Dolphin-MPN/Data/dolphin-mpn.png -d /home/runner/work/Dolphin-MPN/Data/dolphin-mpn.desktop --plugin qt --output appimage
+        mv *.AppImage /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2/DolphinMPN-Linux.AppImage      
     # Upload Artifact
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
