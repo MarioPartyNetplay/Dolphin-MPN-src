@@ -34,9 +34,6 @@ jobs:
     # Build Project
     - name: Run Make
       run: cd build && ninja -j$(nproc)
-    # Configure Dolphin
-    - name: Configure Dolphin
-      run: cd build && mkdir Binaries/OUT/ && cp Binaries/dolphin-mpn Binaries/OUT/dolphin-mpn && cp -r ../Data/Sys/ Binaries/OUT/ && cp -r ../Data/User/ Binaries/OUT/ && touch Binaries/OUT/portable.txt && mv Binaries/OUT/User Binaries/OUT/user
     # Install linuxdeploy
     - name: 'Install linuxdeploy'
       run: |
@@ -51,6 +48,7 @@ jobs:
         mkdir /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2 && mv *.AppImage /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2/
         rm /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2/linuxdeploy-x86_64.AppImage
         rm /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2/linuxdeploy-plugin-qt-x86_64.AppImage
+        cp -r Data/Sys/ build/tmp2/ && cp -r Data/User/ build/tmp2/ && touch build/tmp2/portable.txt && mv build/tmp2/User build/tmp2/user
    # Upload Artifact
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
