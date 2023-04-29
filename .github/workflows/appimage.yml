@@ -49,7 +49,9 @@ jobs:
       run: |
         export QMAKE=qmake6 && ./linuxdeploy-x86_64.AppImage --appdir AppDir  -e "/home/runner/work/Dolphin-MPN/Dolphin-MPN/build/Binaries/OUT/dolphin-mpn"  -i /home/runner/work/Dolphin-MPN/Dolphin-MPN/Data/dolphin-mpn.png -d /home/runner/work/Dolphin-MPN/Dolphin-MPN/Data/dolphin-mpn.desktop --plugin qt --output appimage
         mkdir /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2 && mv *.AppImage /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2/
-    # Upload Artifact
+        rm /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2/linuxdeploy-x86_64.AppImage
+        rm /home/runner/work/Dolphin-MPN/Dolphin-MPN/build/tmp2/linuxdeploy-plugin-qt-x86_64.AppImage
+   # Upload Artifact
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
       with:
