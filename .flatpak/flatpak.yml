@@ -107,6 +107,7 @@ modules:
       - /share/man
     post-install:
       - install -D -t ${FLATPAK_DEST}/bin/ dolphin-mpn-wrapper
+      - install -Dm644 ${FLATPAK_DEST}/../../Data/User/* /app/share/dolphin-mpn/
       - desktop-file-edit --set-key=Exec --set-value='/app/bin/dolphin-mpn-wrapper'
         /app/share/applications/dolphin-mpn.desktop
       - desktop-file-edit --set-key=Name --set-value='Dolphin MPN'
