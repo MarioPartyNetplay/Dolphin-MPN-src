@@ -2126,7 +2126,7 @@ bool NetPlayServer::SyncCodes()
   {
     // Create a Gecko Code Vector with just the active codes
     std::vector<Gecko::GeckoCode> s_active_codes =
-        Gecko::SetAndReturnActiveCodes(Gecko::LoadCodes(globalIni, localIni, game_id));
+        Gecko::SetAndReturnActiveCodes(Gecko::LoadCodes(globalIni, localIni));
 
     // Determine Codelist Size
     u16 codelines = 0;
@@ -2157,6 +2157,7 @@ bool NetPlayServer::SyncCodes()
       sf::Packet pac;
       pac << MessageID::SyncCodes;
       pac << SyncCodeID::GeckoData;
+      std::vector<std::string> v_ActiveGeckoCodes = {};
       // Iterate through the active code vector and send each codeline
       for (const Gecko::GeckoCode& active_code : s_active_codes)
       {
@@ -2176,6 +2177,7 @@ bool NetPlayServer::SyncCodes()
         codeStr += "• " + code + "\n";
       packet << codeStr;
       SendAsyncToClients(std::move(pac));
+      
     }
   }
 
@@ -2215,6 +2217,7 @@ bool NetPlayServer::SyncCodes()
       pac << MessageID::SyncCodes;
       pac << SyncCodeID::ARData;
       // Iterate through the active code vector and send each codeline
+      std::vector<std::string> v_ActiveARCodes = {};
       for (const ActionReplay::ARCode& active_code : s_active_codes)
       {
         INFO_LOG_FMT(NETPLAY, "Sending {}", active_code.name);

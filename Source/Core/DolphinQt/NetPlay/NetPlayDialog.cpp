@@ -971,14 +971,14 @@ void NetPlayDialog::OnHostInputAuthorityChanged(bool enabled)
   });
 }
 
-void NetPlayDialog::`(u32 frame, const std::string& player)
+void NetPlayDialog::OnDesync(u32 frame, const std::string& player)
 {
   DisplayMessage(tr("Possible desync detected: %1 might have desynced at frame %2. Game restart advised.")
                      .arg(QString::fromStdString(player), QString::number(frame)),
                  "red", OSD::Duration::VERY_LONG);
 
   OSD::AddTypedMessage(OSD::MessageType::NetPlayDesync,
-                       "Possible desync detected at frame %2. Game restart advised.",
+                       "Possible desync detected. Game restart advised.",
                        OSD::Duration::VERY_LONG, OSD::Color::RED);
 }
 
@@ -1287,4 +1287,14 @@ void NetPlayDialog::SetHostWiiSyncData(std::vector<u64> titles, std::string redi
   auto client = Settings::Instance().GetNetPlayClient();
   if (client)
     client->SetWiiSyncData(nullptr, std::move(titles), std::move(redirect_folder));
+}
+
+void NetPlayDialog::OnActiveGeckoCodes(std::string codeStr)
+{
+  DisplayMessage(QString::fromStdString(codeStr), "cornflowerblue");
+}
+
+void NetPlayDialog::OnActiveARCodes(std::string codeStr)
+{
+  DisplayMessage(QString::fromStdString(codeStr), "cornflowerblue");
 }

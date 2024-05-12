@@ -1005,9 +1005,9 @@ bool MainWindow::RequestStop()
 
 bool MainWindow::RequestStopNetplay()
 {
-  if (!Core::IsRunning())
+  if (!Core::IsRunning(Core::System::GetInstance()))
   {
-    Core::QueueHostJob([this] { OnStopComplete(); }, true);
+    Core::QueueHostJob([this](Core::System&) { OnStopComplete(); }, true);
     return true;
   }
 
@@ -1030,13 +1030,13 @@ bool MainWindow::RequestStopNetplay()
 
     Common::ScopeGuard confirm_lock([this] { m_stop_confirm_showing = false; });
 
-    const Core::State state = Core::GetState();
+    const Core::State state = Core::GetState(Core::System::GetInstance());
 
     // Only pause the game, if NetPlay is not running
     bool pause = !Settings::Instance().GetNetPlayClient();
 
     if (pause)
-      Core::SetState(Core::State::Paused);
+      Core::SetState(Core::System::GetInstance(), Core::State::Paused);
 
     if (rendered_widget_was_active)
     {
@@ -1068,7 +1068,7 @@ bool MainWindow::RequestStopNetplay()
       m_render_widget->SetWaitingForMessageBox(false);
 
       if (pause)
-        Core::SetState(state);
+        Core::SetState(Core::System::GetInstance(), state);
 
       return false;
     }
@@ -1089,8 +1089,8 @@ bool MainWindow::RequestStopNetplay()
 
     // Unpause because gracefully shutting down needs the game to actually request a shutdown.
     // TODO: Do not unpause in debug mode to allow debugging until the complete shutdown.
-    if (Core::GetState() == Core::State::Paused)
-      Core::SetState(Core::State::Running);
+    if (Core::GetState(Core::System::GetInstance()) == Core::State::Paused)
+      Core::SetState(Core::System::GetInstance(), Core::State::Running);
 
     // Tell NetPlay about the power event
     if (NetPlay::IsNetPlayRunning())
