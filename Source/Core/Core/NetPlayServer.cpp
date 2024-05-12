@@ -518,24 +518,6 @@ unsigned int NetPlayServer::OnDisconnect(const Client& player)
 {
   const PlayerId pid = player.pid;
 
-  if (m_is_running)
-  {
-    for (PlayerId& mapping : m_pad_map)
-    {
-      if (mapping == pid && pid != 1)
-      {
-        std::lock_guard lkg(m_crit.game);
-        m_is_running = false;
-
-        sf::Packet spac;
-        spac << MessageID::DisableGame;
-        // this thread doesn't need players lock
-        SendToClients(spac);
-        break;
-      }
-    }
-  }
-
   if (m_start_pending)
   {
     ChunkedDataAbort();

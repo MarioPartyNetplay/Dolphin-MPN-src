@@ -978,7 +978,6 @@ void NetPlayClient::OnStopGame(sf::Packet& packet)
 
   INFO_LOG_FMT(NETPLAY, "Game stopped");
   StopGame();
-  m_dialog->OnMsgStopGame();
 }
 
 void NetPlayClient::OnPowerButton()
@@ -1093,8 +1092,8 @@ void NetPlayClient::OnSendCodesMsg(sf::Packet& packet)
   // add to chat
   std::string firstLineAR = "Active AR Codes:";
   m_dialog->OnActiveARCodes(firstLineAR);
-  for (const std::string codeAR : v_ActiveARCodes)
-    m_dialog->OnActiveARCodes(codeAR);
+  for (const std::string code : v_ActiveARCodes)
+    m_dialog->OnActiveARCodes(code);
 
 }
 

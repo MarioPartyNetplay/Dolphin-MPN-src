@@ -924,6 +924,11 @@ void NetPlayDialog::OnPlayerDisconnect(const std::string& player)
   DisplayMessage(tr("%1 has left").arg(QString::fromStdString(player)), "darkcyan");
 }
 
+void NetPlayDialog::OnPlayerClose(const std::string& player)
+{
+  DisplayMessage(tr("%1 has closed the game.").arg(QString::fromStdString(player)), "darkcyan");
+}
+
 void NetPlayDialog::OnPadBufferChanged(u32 buffer)
 {
   QueueOnObject(this, [this, buffer] {
