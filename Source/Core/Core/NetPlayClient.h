@@ -169,6 +169,7 @@ public:
   void RequestGolfControl();
   std::string GetCurrentGolfer();
   std::vector<std::string> v_ActiveGeckoCodes;
+  std::vector<std::string> v_ActiveARCodes;
 
   // Send and receive pads values
   struct WiimoteDataBatchEntry

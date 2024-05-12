@@ -1076,6 +1076,8 @@ void NetPlayClient::OnSendCodesMsg(sf::Packet& packet)
   auto ss = std::stringstream{codeStr};
 
   v_ActiveGeckoCodes = {};
+  v_ActiveARCodes = {};
+
   for (std::string line; std::getline(ss, line, '\n');)
     v_ActiveGeckoCodes.push_back(line);
 
@@ -1084,6 +1086,16 @@ void NetPlayClient::OnSendCodesMsg(sf::Packet& packet)
   m_dialog->OnActiveGeckoCodes(firstLine);
   for (const std::string code : v_ActiveGeckoCodes)
     m_dialog->OnActiveGeckoCodes(code);
+
+  for (std::string line; std::getline(ss, line, '\n');)
+    v_ActiveARCodes.push_back(line);
+
+  // add to chat
+  std::string firstLine = "Active AR Codes:";
+  m_dialog->OnActiveGeckoCodes(firstLine);
+  for (const std::string code : v_ActiveARCodes)
+    m_dialog->OnActiveGeckoCodes(code);
+
 }
 
 

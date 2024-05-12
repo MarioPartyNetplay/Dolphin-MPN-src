@@ -798,6 +798,20 @@ unsigned int NetPlayServer::OnData(sf::Packet& packet, Client& player)
   }
   break;
 
+  case MessageID::SendCodes:
+  {
+    std::string codes;
+    packet >> codes;
+
+    // send codes to other clients
+    sf::Packet spac;
+    spac << MessageID::SendCodes;
+    spac << codes;
+
+    SendToClients(spac);
+  }
+  break;
+
   case MessageID::PadData:
   {
     // if this is pad data from the last game still being received, ignore it
