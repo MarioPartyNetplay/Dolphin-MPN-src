@@ -131,13 +131,23 @@ const char* GetGeckoCodeHandlerPath()
 static Installation InstallCodeHandlerLocked(const Core::CPUThreadGuard& guard)
 {
   std::string data;
+
+  const char* code_handler_file = GetGeckoCodeHandlerPath();
+
   if (!File::ReadFileToString(File::GetSysDirectory() + GetGeckoCodeHandlerPath(), data))
   {
     ERROR_LOG_FMT(ACTIONREPLAY, "Could not enable cheats because the selected codehandler was missing.");
     return Installation::Failed;
   }
 
-  if (data.size() > INSTALLER_END_ADDRESS - INSTALLER_BASE_ADDRESS - CODE_SIZE)
+  const bool is_mpn_handler_and_game_id_gp7e01 = (code_handler_file = GECKO_CODE_HANDLER_MPN) &&
+                                                 (SConfig::GetInstance().GetGameID() == "GP7E01");
+  const u32 base_address =
+      is_mpn_handler_and_game_id_gp7e01 ? INSTALLER_BASE_ADDRESS_MP7 : INSTALLER_BASE_ADDRESS;
+  const u32 end_address_base =
+      is_mpn_handler_and_game_id_gp7e01 ? INSTALLER_END_ADDRESS_MP7 : INSTALLER_END_ADDRESS;
+
+  if (data.size() > end_address_base - base_address - CODE_SIZE)
   {
     ERROR_LOG_FMT(ACTIONREPLAY, "The codehandler is too big. The file may be corrupt.");
     return Installation::Failed;
@@ -151,27 +161,27 @@ static Installation InstallCodeHandlerLocked(const Core::CPUThreadGuard& guard)
 
   // Install code handler
   for (u32 i = 0; i < data.size(); ++i)
-    PowerPC::MMU::HostWrite_U8(guard, data[i], INSTALLER_BASE_ADDRESS + i);
+    PowerPC::MMU::HostWrite_U8(guard, data[i], base_address + i);
 
   // Patch the code handler to the current system type (Gamecube/Wii)
   for (u32 h = 0; h < data.length(); h += 4)
   {
     // Patch MMIO address
-    if (PowerPC::MMU::HostRead_U32(guard, INSTALLER_BASE_ADDRESS + h) ==
+    if (PowerPC::MMU::HostRead_U32(guard, base_address + h) ==
         (0x3f000000u | ((mmio_addr ^ 1) << 8)))
     {
-      NOTICE_LOG_FMT(ACTIONREPLAY, "Patching MMIO access at {:08x}", INSTALLER_BASE_ADDRESS + h);
-      PowerPC::MMU::HostWrite_U32(guard, 0x3f000000u | mmio_addr << 8, INSTALLER_BASE_ADDRESS + h);
+      NOTICE_LOG_FMT(ACTIONREPLAY, "Patching MMIO access at {:08x}", base_address + h);
+      PowerPC::MMU::HostWrite_U32(guard, 0x3f000000u | mmio_addr << 8, base_address + h);
     }
   }
 
   const u32 codelist_base_address =
-      INSTALLER_BASE_ADDRESS + static_cast<u32>(data.size()) - CODE_SIZE;
-  const u32 codelist_end_address = INSTALLER_END_ADDRESS;
+      base_address + static_cast<u32>(data.size()) - CODE_SIZE;
+  const u32 codelist_end_address = end_address_base;
 
   // Write a magic value to 'gameid' (codehandleronly does not actually read this).
   // This value will be read back and modified over time by HLE_Misc::GeckoCodeHandlerICacheFlush.
-  PowerPC::MMU::HostWrite_U32(guard, MAGIC_GAMEID, INSTALLER_BASE_ADDRESS);
+  PowerPC::MMU::HostWrite_U32(guard, MAGIC_GAMEID, base_address);
 
   // Create GCT in memory
   PowerPC::MMU::HostWrite_U32(guard, 0x00d0c0de, codelist_base_address);
@@ -213,7 +223,8 @@ static Installation InstallCodeHandlerLocked(const Core::CPUThreadGuard& guard)
                end_address - start_address);
 
   OSD::AddMessage(fmt::format("Gecko Codes: Using {} of {} bytes", next_address - start_address,
-               end_address - start_address));
+                              end_address - start_address),
+                  OSD::Duration::VERY_LONG);
 
   // Stop code. Tells the handler that this is the end of the list.
   PowerPC::MMU::HostWrite_U32(guard, 0xF0000000, next_address);
@@ -221,15 +232,15 @@ static Installation InstallCodeHandlerLocked(const Core::CPUThreadGuard& guard)
   PowerPC::MMU::HostWrite_U32(guard, 0, HLE_TRAMPOLINE_ADDRESS);
 
   // Turn on codes
-  PowerPC::MMU::HostWrite_U8(guard, 1, INSTALLER_BASE_ADDRESS + 7);
+  PowerPC::MMU::HostWrite_U8(guard, 1, base_address + 7);
 
   // Invalidate the icache and any asm codes
   auto& ppc_state = guard.GetSystem().GetPPCState();
   auto& memory = guard.GetSystem().GetMemory();
   auto& jit_interface = guard.GetSystem().GetJitInterface();
-  for (u32 j = 0; j < (INSTALLER_END_ADDRESS - INSTALLER_BASE_ADDRESS); j += 32)
+  for (u32 j = 0; j < (end_address - base_address); j += 32)
   {
-    ppc_state.iCache.Invalidate(memory, jit_interface, INSTALLER_BASE_ADDRESS + j);
+    ppc_state.iCache.Invalidate(memory, jit_interface, base_address + j);
   }
   return Installation::Installed;
 }
@@ -308,7 +319,13 @@ void RunCodeHandler(const Core::CPUThreadGuard& guard)
                 "PC = {:#010x}, SP = {:#010x}, SFP = {:#010x}",
                 ppc_state.pc, SP, SFP);
   LR(ppc_state) = HLE_TRAMPOLINE_ADDRESS;
-  ppc_state.pc = ppc_state.npc = ENTRY_POINT;
-}
 
+  const char* code_handler_file = GetGeckoCodeHandlerPath();
+
+  const bool is_mpn_handler_and_game_id_gp7e01 = (code_handler_file = GECKO_CODE_HANDLER_MPN) &&
+                                                 (SConfig::GetInstance().GetGameID() == "GP7E01");
+
+  const u32 entry_point2 = is_mpn_handler_and_game_id_gp7e01 ? ENTRY_POINT_MP7 : ENTRY_POINT;
+  ppc_state.pc = ppc_state.npc = entry_point2;
+}
 }  // namespace Gecko

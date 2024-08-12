@@ -609,7 +609,8 @@ const mpn_scene_t MP7_GAMESTATES[] = {{NONE, 0x03, {"Boot Logos"}, 0},
    Mario Party 8 metadata
 ============================================================================ */
 
-const mpn_addresses_t MP8_ADDRESSES = {0x00228764, 0x00228765, 0x002287CC, 0x002CD222};
+const mpn_addresses_t MP8_ADDRESSES = {0x00228764, 0x00228765, 0x002287CC, 0x002CD222,
+                                       0x0018FC19, 0x0018FC23, 0x0018FC2D, 0x0018FC37};
 
 const mpn_board_t MP8_BOARDS[] = {{1, 0x10, {"DK's Treetop Temple"}, {"mp8-dktt"}},
                                   {2, 0x11, {"Goomba's Booty Boardwalk"}, {"mp8-gbb"}},
