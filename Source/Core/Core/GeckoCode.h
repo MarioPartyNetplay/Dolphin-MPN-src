@@ -54,7 +54,21 @@ constexpr u32 INSTALLER_END_ADDRESS = 0x80003000;
 constexpr u32 INSTALLER_BASE_ADDRESS_MP7 = 0x8023CF6C;
 constexpr u32 INSTALLER_END_ADDRESS_MP7 = 0x8023F9CC;
 
+// Override kerjump to 0x80213974 location for CodeHandler
+constexpr u32 INSTALLER_BASE_ADDRESS_MP6 = 0x80213974;
+constexpr u32 INSTALLER_END_ADDRESS_MP6 = 0x80216014;
+
+// Override kerjump to 0x801A811C location for CodeHandler
+constexpr u32 INSTALLER_BASE_ADDRESS_MP5 = 0x801A811C;
+constexpr u32 INSTALLER_END_ADDRESS_MP5 = 0x801A9B5C;
+
+// Override kerjump to 0x8011CCC4 location for CodeHandler
+constexpr u32 INSTALLER_BASE_ADDRESS_MP4 = 0x8011CCC4;
+constexpr u32 INSTALLER_END_ADDRESS_MP4 = 0x8011DCC0;
+
 constexpr u32 ENTRY_POINT = INSTALLER_BASE_ADDRESS + 0xA8;
+constexpr u32 ENTRY_POINT_MP5 = INSTALLER_BASE_ADDRESS_MP5 + 0xA8;
+constexpr u32 ENTRY_POINT_MP6 = INSTALLER_BASE_ADDRESS_MP6 + 0xA8;
 constexpr u32 ENTRY_POINT_MP7 = INSTALLER_BASE_ADDRESS_MP7 + 0xA8;
 
 // If the GCT is max-length then this is the second word of the End code (0xF0000000 0x00000000)

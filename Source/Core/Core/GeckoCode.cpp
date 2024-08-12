@@ -143,12 +143,22 @@ static Installation InstallCodeHandlerLocked(const Core::CPUThreadGuard& guard)
     return Installation::Failed;
   }
 
-  const bool is_mpn_handler_and_game_id_gp7e01 = (IsGeckoCodeHandlerEnabled() == true) &&
+  const bool is_mpn_handler_and_game_id_gp7e01 = IsGeckoCodeHandlerEnabled() &&
                                                  (SConfig::GetInstance().GetGameID() == "GP7E01");
-  const u32 base_address =
-      is_mpn_handler_and_game_id_gp7e01 ? INSTALLER_BASE_ADDRESS_MP7 : INSTALLER_BASE_ADDRESS;
-  const u32 end_address_base =
-      is_mpn_handler_and_game_id_gp7e01 ? INSTALLER_END_ADDRESS_MP7 : INSTALLER_END_ADDRESS;
+  const bool is_mpn_handler_and_game_id_gp6e01 = IsGeckoCodeHandlerEnabled() &&
+                                                 (SConfig::GetInstance().GetGameID() == "GP6E01");
+  const bool is_mpn_handler_and_game_id_gp5e01 = IsGeckoCodeHandlerEnabled() &&
+                                                 (SConfig::GetInstance().GetGameID() == "GP5E01");
+
+  const u32 base_address = is_mpn_handler_and_game_id_gp7e01 ? INSTALLER_BASE_ADDRESS_MP7 :
+                           is_mpn_handler_and_game_id_gp6e01 ? INSTALLER_BASE_ADDRESS_MP6 :
+                           is_mpn_handler_and_game_id_gp5e01 ? INSTALLER_BASE_ADDRESS_MP5 :
+                           INSTALLER_BASE_ADDRESS;
+
+  const u32 end_address_base = is_mpn_handler_and_game_id_gp7e01 ? INSTALLER_END_ADDRESS_MP7 :
+                              is_mpn_handler_and_game_id_gp6e01 ? INSTALLER_END_ADDRESS_MP6 :
+                              is_mpn_handler_and_game_id_gp5e01 ? INSTALLER_END_ADDRESS_MP5 :
+                              INSTALLER_END_ADDRESS;
 
   if (data.size() > end_address_base - base_address - CODE_SIZE)
   {
@@ -322,10 +332,16 @@ void RunCodeHandler(const Core::CPUThreadGuard& guard)
                 ppc_state.pc, SP, SFP);
   LR(ppc_state) = HLE_TRAMPOLINE_ADDRESS;
 
-  const bool is_mpn_handler_and_game_id_gp7e01 =
-      (IsGeckoCodeHandlerEnabled() == true) && (SConfig::GetInstance().GetGameID() == "GP7E01");
-
-  const u32 entry_point2 = is_mpn_handler_and_game_id_gp7e01 ? ENTRY_POINT_MP7 : ENTRY_POINT;
+  const bool is_mpn_handler_and_game_id_gp7e01 = IsGeckoCodeHandlerEnabled() &&
+                                                 (SConfig::GetInstance().GetGameID() == "GP7E01");
+  const bool is_mpn_handler_and_game_id_gp6e01 = IsGeckoCodeHandlerEnabled() &&
+                                                 (SConfig::GetInstance().GetGameID() == "GP6E01");
+  const bool is_mpn_handler_and_game_id_gp5e01 = IsGeckoCodeHandlerEnabled() &&
+                                                 (SConfig::GetInstance().GetGameID() == "GP5E01");
+  const u32 entry_point2 = is_mpn_handler_and_game_id_gp7e01 ? ENTRY_POINT_MP7 :
+                          is_mpn_handler_and_game_id_gp6e01 ? ENTRY_POINT_MP6 :
+                          is_mpn_handler_and_game_id_gp5e01 ? ENTRY_POINT_MP5:
+                          ENTRY_POINT;               
   ppc_state.pc = ppc_state.npc = entry_point2;
 }
 }  // namespace Gecko
