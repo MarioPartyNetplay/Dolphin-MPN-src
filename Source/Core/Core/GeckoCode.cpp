@@ -126,13 +126,16 @@ const char* GetGeckoCodeHandlerPath()
     GECKO_CODE_HANDLER_MPN : GECKO_CODE_HANDLER;
 }
 
+bool IsGeckoCodeHandlerEnabled()
+{
+  return Config::Get(Config::MAIN_CODE_HANDLER);
+}
+
 // Requires s_active_codes_lock
 // NOTE: Refer to "codehandleronly.s" from Gecko OS.
 static Installation InstallCodeHandlerLocked(const Core::CPUThreadGuard& guard)
 {
   std::string data;
-
-  const char* code_handler_file = GetGeckoCodeHandlerPath();
 
   if (!File::ReadFileToString(File::GetSysDirectory() + GetGeckoCodeHandlerPath(), data))
   {
@@ -140,7 +143,7 @@ static Installation InstallCodeHandlerLocked(const Core::CPUThreadGuard& guard)
     return Installation::Failed;
   }
 
-  const bool is_mpn_handler_and_game_id_gp7e01 = (code_handler_file = GECKO_CODE_HANDLER_MPN) &&
+  const bool is_mpn_handler_and_game_id_gp7e01 = (IsGeckoCodeHandlerEnabled() == true) &&
                                                  (SConfig::GetInstance().GetGameID() == "GP7E01");
   const u32 base_address =
       is_mpn_handler_and_game_id_gp7e01 ? INSTALLER_BASE_ADDRESS_MP7 : INSTALLER_BASE_ADDRESS;
@@ -223,8 +226,7 @@ static Installation InstallCodeHandlerLocked(const Core::CPUThreadGuard& guard)
                end_address - start_address);
 
   OSD::AddMessage(fmt::format("Gecko Codes: Using {} of {} bytes", next_address - start_address,
-                              end_address - start_address),
-                  OSD::Duration::VERY_LONG);
+                              end_address - start_address));
 
   // Stop code. Tells the handler that this is the end of the list.
   PowerPC::MMU::HostWrite_U32(guard, 0xF0000000, next_address);
@@ -320,10 +322,8 @@ void RunCodeHandler(const Core::CPUThreadGuard& guard)
                 ppc_state.pc, SP, SFP);
   LR(ppc_state) = HLE_TRAMPOLINE_ADDRESS;
 
-  const char* code_handler_file = GetGeckoCodeHandlerPath();
-
-  const bool is_mpn_handler_and_game_id_gp7e01 = (code_handler_file = GECKO_CODE_HANDLER_MPN) &&
-                                                 (SConfig::GetInstance().GetGameID() == "GP7E01");
+  const bool is_mpn_handler_and_game_id_gp7e01 =
+      (IsGeckoCodeHandlerEnabled() == true) && (SConfig::GetInstance().GetGameID() == "GP7E01");
 
   const u32 entry_point2 = is_mpn_handler_and_game_id_gp7e01 ? ENTRY_POINT_MP7 : ENTRY_POINT;
   ppc_state.pc = ppc_state.npc = entry_point2;
